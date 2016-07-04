@@ -5,8 +5,18 @@ class HttpUtilities {
   checkStatus(response) {
     if (response && response.status && response.status < 200 || response.status >= 300) {
       const error = new Error(response.statusText);
-      error.response = response;
-      throw error;
+      return response.json()
+        .then((jsonResponse) => {
+          error.response = {
+            headers: response.headers,
+            status: response.status,
+            statusText: response.statusText,
+            url: response.url,
+            type: response.type,
+            body: jsonResponse
+          };
+          throw error;
+        });
     }
 
     return response;

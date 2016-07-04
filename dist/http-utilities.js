@@ -17,6 +17,12 @@
     value: true
   });
 
+  var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+    return typeof obj;
+  } : function (obj) {
+    return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
+  };
+
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
       throw new TypeError("Cannot call a class as a function");
@@ -50,9 +56,24 @@
       key: "checkStatus",
       value: function checkStatus(response) {
         if (response && response.status && response.status < 200 || response.status >= 300) {
-          var error = new Error(response.statusText);
-          error.response = response;
-          throw error;
+          var _ret = function () {
+            var error = new Error(response.statusText);
+            return {
+              v: response.json().then(function (jsonResponse) {
+                error.response = {
+                  headers: response.headers,
+                  status: response.status,
+                  statusText: response.statusText,
+                  url: response.url,
+                  type: response.type,
+                  body: jsonResponse
+                };
+                throw error;
+              })
+            };
+          }();
+
+          if ((typeof _ret === "undefined" ? "undefined" : _typeof(_ret)) === "object") return _ret.v;
         }
 
         return response;
