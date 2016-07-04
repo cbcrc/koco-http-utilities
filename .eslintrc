@@ -1,0 +1,17 @@
+{
+  "extends": "airbnb",
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "plugins": [
+  ],
+  "rules": {
+    "comma-dangle": 0,
+    "max-len": [2, 100, 2, {
+      "ignoreUrls": true,
+      "ignoreComments": true
+    }]
+  },
+  "parser": "babel-eslint"
+}
