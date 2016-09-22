@@ -55,22 +55,28 @@
     _createClass(HttpUtilities, [{
       key: "checkStatus",
       value: function checkStatus(response) {
-        if (response && response.status && response.status < 200 || response.status >= 300) {
+        if (response && response.status) {
           var _ret = function () {
             var error = new Error(response.statusText);
-            return {
-              v: response.json().then(function (jsonResponse) {
-                error.response = {
-                  headers: response.headers,
-                  status: response.status,
-                  statusText: response.statusText,
-                  url: response.url,
-                  type: response.type,
-                  body: jsonResponse
-                };
-                throw error;
-              })
-            };
+            if (response.status === 401) {
+              error.response = response;
+              throw error;
+            } else if (response && response.status && response.status < 200 || response.status >= 300) {
+              return {
+                v: response.json().then(function (jsonResponse) {
+                  error.response = {
+                    headers: response.headers,
+                    status: response.status,
+                    statusText: response.statusText,
+                    url: response.url,
+                    type: response.type,
+                    body: jsonResponse
+                  };
+
+                  throw error;
+                })
+              };
+            }
           }();
 
           if ((typeof _ret === "undefined" ? "undefined" : _typeof(_ret)) === "object") return _ret.v;

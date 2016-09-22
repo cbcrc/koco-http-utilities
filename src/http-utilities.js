@@ -3,20 +3,26 @@
 
 class HttpUtilities {
   checkStatus(response) {
-    if (response && response.status && response.status < 200 || response.status >= 300) {
+    if (response && response.status) {
       const error = new Error(response.statusText);
-      return response.json()
-        .then((jsonResponse) => {
-          error.response = {
-            headers: response.headers,
-            status: response.status,
-            statusText: response.statusText,
-            url: response.url,
-            type: response.type,
-            body: jsonResponse
-          };
-          throw error;
-        });
+      if (response.status === 401) {
+        error.response = response;
+        throw error;
+      } else if (response && response.status && response.status < 200 || response.status >= 300) {
+        return response.json()
+          .then((jsonResponse) => {
+            error.response = {
+              headers: response.headers,
+              status: response.status,
+              statusText: response.statusText,
+              url: response.url,
+              type: response.type,
+              body: jsonResponse
+            };
+
+            throw error;
+          });
+      }
     }
 
     return response;
